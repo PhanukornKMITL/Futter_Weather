@@ -3,6 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart'as http;
 import 'dart:convert';
 
+import 'package:weather_app/WeatherApi.dart';
+
 void main() =>runApp(
   MaterialApp(
     title: "Weather App",
@@ -25,9 +27,11 @@ class HomeState extends State<Home>{
   var humidity;
   var windSpeed;
 
-  Future getWeather() async{
-    http.Response response = await http.get(Uri.parse("http://api.openweathermap.org/data/2.5/weather?q=Berlin&units=metric&appId=1ef299c7f111fb266af3a484d28ad550"));
-    var result = jsonDecode(response.body);
+   getWeather() async {
+     WeatherApi weatherApi = WeatherApi();
+     await weatherApi.getWeather();
+     http.Response response =  weatherApi.response;
+     var result = jsonDecode(response.body);
 
     setState(() {
       this.temp = result['main']['temp'];
@@ -36,14 +40,13 @@ class HomeState extends State<Home>{
       this.humidity = result['main']['humidity'];
       this.windSpeed = result['wind']['speed'];
     });
-
-    print(result['main']['temp']);
   }
 
   @override
   void initState() {
     super.initState();
     this.getWeather();
+
   }
 
   @override
